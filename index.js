@@ -8,11 +8,10 @@ var window;
 
 //==================== Exit(Error) code ======================== //
 const INPUT_FILE_NOT_FOUND = 100;
-const LOCAL_FILE_NOT_FOUND = 101;
-const UNSUPPORT_INPUT_FILE_TYPE = 102;
-const COOKIES_FILE_NOT_FOUND = 103;
-const LOG_DIRECTORY_NOT_FOUND = 104;
-const WRITE_LOG_SYNC_ERROR = 105;
+const UNSUPPORT_INPUT_FILE_TYPE = 101;
+const COOKIES_FILE_NOT_FOUND = 102;
+const LOG_DIRECTORY_NOT_FOUND = 103;
+const WRITE_LOG_SYNC_ERROR = 104;
 //============================================================== //
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {

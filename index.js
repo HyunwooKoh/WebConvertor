@@ -20,18 +20,22 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 });
 
 
-const checkArgsAvailable = (cookies,logDir) => {
-    if( typeof cookies == 'string' && !fs.existsSync(cookies)) {
-      app.exit(COOKIES_FILE_NOT_FOUND);
-    }
+const checkArgsAvailable = (input, cookies,logDir) => {
+  if( typeof input == 'string' && !fs.existsSync(input)) {
+    app.exit(INPUT_FILE_NOT_FOUND);
+  }
 
-    if(typeof logDir == 'string' && logDir.length > 0) {
-      if(!fs.existsSync(logDir)) {
-        app.exit(LOG_DIRECTORY_NOT_FOUND);
-      } else {
-        makeLogFile(logDir);
-      }
+  if( typeof cookies == 'string' && !fs.existsSync(cookies)) {
+      app.exit(COOKIES_FILE_NOT_FOUND);
+  }
+
+  if(typeof logDir == 'string' && logDir.length > 0) {
+    if(!fs.existsSync(logDir)) {
+      app.exit(LOG_DIRECTORY_NOT_FOUND);
+    } else {
+      makeLogFile(logDir);
     }
+  }
 }
 
 

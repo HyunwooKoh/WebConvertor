@@ -103,19 +103,51 @@ const makeURLOption = (reqHeader) => {
 
 
 const applyAttribute = (margin, header, footer) => {
-// if margin !== undefined 인 경우 margin 세팅 진행
-//   입력받은 margin(string)을 split(‘,’) 하여 top, bottom, right, left 순서 별로
-//   저장 및 각각의 값을 margin/25.4 연산을 통해 mm에서 inch로 변환
-// if header !== undefined 인 경우 header 세팅을 위한 템플릿 생성
-//   ‘<span style=“font-size:10px; margin-left:25px;”>’ + header + ‘</span>’
-// if footer !== undefined 인 경우 footer 세팅을 위한 템플릿 생성
-//   ‘<span style=“font-size:10px; margin-left:25px;”>’ + footer + ‘</span>’
-// 설정한 pageSize에 margin을 문제 없이 설정할 수 있는지 검증
-// 위에서 생성한 객체들을 list에 담아서 return
-// return [margins, headerTemplate, footerTemplate, pageSize]
-  logging("INFO","Apply margin ###");
-  logging("INFO","Apply Header : " + header);
-  logging("INFO","Apply footer : " + footer);
+  let margins = {};
+  let headerTemplate = '<span></span>';
+  let footerTemplate = '<span></span>';
+
+  logging("INFO","### Start writePdf ###");
+  window.webContents.executeJavaScript(`const createStyleSheet = () => {
+    const styleEl = document.createElement('style');
+    document.head.appendChild(styleEl);
+    return styleEl.sheet;
+  };`);
+
+  logging("INFO","### After 1st js execute ###");
+  window.webContents.executeJavaScript(`const appendPrintDiv = (name, contents) => {
+    const elem = document.createElement('div');
+    elem.className = name;
+    elem.innerText = contents;
+    document.body.appendChild(elem);
+  };`);
+
+  logging("INFO","### Before Set margin ###");
+  if (margin === undefined || margin === 'default') {
+    // 크롬에서 PDF로 저장할 때 여백을 기본값으로 저장하게되면, PDF에 여백이 특수하게 부여됩니다.
+    // 그 값은 top, left = 29.00004 pt 그리고 bottom, right = 28.000042 pt 로 부여됩니다.
+    // 따라 두 포인트를 인치로 전환하여 아래 입력합니다.
+    const defaultMarginLT = 0.40277833333; 
+    const defaultMarginRB = 0.388889472222;
+    margins = {"top":defaultMarginLT,"bottom":defaultMarginRB,"right":defaultMarginRB,"left":defaultMarginLT};
+  } else if (margin === 'no-margin' || margin === 'minimum') {
+    margins = {"top":0,"bottom":0,"right":0,"left":0};
+  } else if (margin.split(',').length === 4) {
+    const margins_key_list = ["top", "bottom", "right", "left"];
+    margins = margins_key_list.reduce((acc, val, idx) => ({ ... acc, [val]: margin_array[idx]/25.4}), {});    // 사용자 input은 mm지만 이를 inch로 변환해야함(mm / 25.4 --> inch)
+  }
+  logging("INFO","### After Set margin ###");
+
+  if (header !== undefined) {
+    logging("INFO","Apply Header : " + header);
+    headerTemplate = '<span style="font-size:10px; margin-left:25px;">'+header+'</span>';
+  }
+
+  if (footer !== undefined) {
+    logging("INFO","Apply footer : " + footer);
+    footerTemplate = '<span style="font-size:10px; margin-left:25px;">'+footer+'</span>';
+  }
+  return [margins, headerTemplate, footerTemplate];
 };
 
 

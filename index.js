@@ -12,6 +12,7 @@ const UNSUPPORT_INPUT_FILE_TYPE = 101;
 const COOKIES_FILE_NOT_FOUND = 102;
 const LOG_DIRECTORY_NOT_FOUND = 103;
 const WRITE_LOG_SYNC_ERROR = 104;
+const APP_TIMEOUT = 105;
 //============================================================== //
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {

@@ -87,13 +87,26 @@ const logging = (type,context) => {
 
 
 const insertCookies = (url, cookies) => {
-  // 입력받은 cookie 파일을 읽어 JSON 모듈로 파싱
-	// 데이터의 key를 순회하며 cookie 객체 생성
-	// cookie 객체 : (url, name, value, expirationDate, path)
-	// 각 json key 별로 생성한 cookie 객체를 electron 모듈의 
-	// defaultSession.cookies.set(cookei)와 같이 세팅
-	// cookie 설정 중 오류가 발생한 경우, 별도의 종료 프로세스 없이 계속 진행
-
+  if( typeof cookies == 'string' && cookies.length > 0) {
+    const cookieFile = fs.readFileSync(cookies);
+    if(cookieFile) {
+      const cookieData = JSON.parse(cookieFile.toString());
+      logging("INFO", "cookies file size : " + Object.keys(cookieData.cookies).length.toString() + " cookieFile.toString() : " + cookieFile.toString());
+      for(var i = 0 ; i < Object.keys(cookieData.cookies).length; i++) {
+        const cookie = {
+          url : url,
+          name : cookieData.cookies[i].name,
+          value : cookieData.cookies[i].value,
+          expirationDate : new Date().getTime() + 60000, //Set Expiration Sec Here.
+          path : cookieData.cookies[i].path != undefined ? cookieData.cookies[i].path : ""
+        }
+        session.defaultSession.cookies.set(cookie , function(error) {
+          if(error)
+            logging("ERROR","Insert Cookie Error, error : " + error);
+        });
+      }
+    }
+  }
 }
 
 

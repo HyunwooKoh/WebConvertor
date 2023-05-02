@@ -96,9 +96,12 @@ const insertCookies = (url, cookies) => {
 
 }
 
+
 const makeURLOption = (reqHeader) => {
-  // reqHeader 경로의 header파일 (txt)를 읽어 이를 string화
-	// retrun headerString
+  let header = {
+    extraHeaders : fs.readFileSync(reqHeader).toString()
+  }
+  return header;
 }
 
 

@@ -1,0 +1,15 @@
+{
+    "cookies" :
+    [
+        {
+            "url"   : "https://google.com/",
+            "name"  : "hyunwoo",
+            "value" : "1234",
+            "domain"    : "localhost",
+            "path"      : "/",
+            "expirationDate" :1814157005,
+            "secure" : false,
+            "httpOnly" : false
+        }
+    ]
+}

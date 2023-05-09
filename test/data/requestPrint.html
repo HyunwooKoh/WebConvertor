@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<title>JavaScript Apply</title>
+</head>
+
+<body>
+    
+    <h1>API TEST</h1>
+	<button onclick="printDate()">현재 날짜와 시간 표시</button>
+	<p id="date"></p>
+	<p>아래 텍스트가 "API TEST" 로 나와야 성공</p>
+  	<p id="text">TEST FAILED</p>
+	<script>
+		function printDate() {
+			document.getElementById("date").innerHTML = Date();
+		}
+        console.log("logging")
+      	setTimeout( function () {
+            document.getElementById("text").innerHTML = window.API.test()
+            window.API.requestPrint()
+        }, 5000);
+	</script>
+
+</body>
+
+</html>

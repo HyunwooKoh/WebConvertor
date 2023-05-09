@@ -169,20 +169,25 @@ const applyAttribute = (margin, header, footer) => {
 
 
 const printToPdf = (filePath, margins, printBackground, landscape, pageSize, headerTemplate, footerTemplate, displayHeaderFooter, postCallback) => {
-  // 전달받은 파라미터를 사용하여 변환 진행
-	// postCallback() 함수는 printPage에서 () => app.exit(0)를 전달
-	// window.webContents.printToPDF({
-	// 	margins : margins,
-	// 	printBackground : printBackground,
-	// 	landscape : landscape,
-	// 	pageSize : pageSize,
-	// 	displayHeaderFooter : displayHeaderFooter,
-	// 	headerTemplate : headerTemplate,
-	// 	footerTemplate : footerTemplate}).then(data=> {
-	// callback 부분에서 ‘fs’모듈을 통해 로컬에 파일로 저장 및 넘겨받은 callback 
-	// 함수 호출
-	//   fs.writeFile(filePath, data, () => {postCallback();})
-	logging("INFO","### start webContents.printToPDF() ###");
+  logging("INFO","### start webContents.printToPDF() ###");
+  window.webContents.printToPDF({
+    margins: margins,
+    printBackground: printBackground,
+    landscape: landscape,
+    pageSize: pageSize,
+    displayHeaderFooter: displayHeaderFooter,
+    headerTemplate: headerTemplate,
+    footerTemplate: footerTemplate
+  }).then(data => {
+    logging("INFO","filePath : " + filePath);
+    require('fs').writeFile(filePath, data, () => {
+      if (typeof postCallback === 'function') {
+        postCallback();
+      }
+    }); 
+  }).catch(error => {
+    logging(`Failed to write PDF: `, error)
+  })
   logging("INFO","### finish writePdf ###");
 };
 

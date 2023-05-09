@@ -193,16 +193,28 @@ const printToPdf = (filePath, margins, printBackground, landscape, pageSize, hea
 
 
 const printPage = (output, delay, margin, printBackground, landscape, header, footer, pageSize) => {
-  // print(...)에서 ‘did-finish-load’ 콜백 시 호출되는 함수
-	// attr_data = applyAttribute(margin, header, footer, pageSize)
-	// header나 footer가 정의된 경우 displayHeaderFooter 플래그 on
-	// delay가 있거나, footer, header 및 margin 중 하나라도 설정된 경우
-	//   delayTime을 설정 (기본값 100ms -> footer 등의 attr 설정 시간)
-	// setTimeout(printToPdf(..), delayTime) 으로 delay를 준 후 printToPdf(...)
-	//   함수에서 실제 변환 진행
-  //   setTimeout(() => {
-  //     // call printToPdf()
-  //   }, delayTime);
+  let return_data = applyAttribute(margin, header, footer, pageSize);
+  let margins = return_data[0];
+  let headerTemplate = return_data[1];
+  let footerTemplate = return_data[2];
+  let displayHeaderFooter = false;
+  
+  if (header !== undefined || footer !== undefined) {
+    displayHeaderFooter = true;
+  }
+
+  if (margins === -1) app.exit(MARGIN_OVER_PAGESIZE);
+  let delayTime = (delay === undefined || delay === 0) ? 
+    (margin === undefined && footer === undefined && header === undefined) ? 0 : 100 
+    : delay;
+  
+  if(delay !== delayTime) {
+    logging("INFO","Set delay time " + delay + " to " + delayTime + "for apply attribute");
+  }
+
+  setTimeout(() => {
+    printToPdf(output, margins, printBackground, landscape, pageSize, headerTemplate, footerTemplate, displayHeaderFooter, () => app.exit(0));
+  }, delayTime); // To Set Attribute on Web, we need tick!
 }
 
 

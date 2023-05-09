@@ -16,7 +16,7 @@ To convert a traditional web page to PDF, you had to rely on the user to view th
   build.py  
 
 If the error below is displayed, run npm install because number 1 is omitted.  
-- Ex) npm ERR! Failed at the webConvertor@0.0.1 start script 'electron .'.
+- Ex npm ERR! Failed at the webConvertor@0.0.1 start script 'electron .'.
 <hr/>
 
 ## Usage

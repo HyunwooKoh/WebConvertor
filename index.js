@@ -245,6 +245,10 @@ const print = async (input, output, cookies, requestHeader, delay, timeout, marg
     //  4 - 2. make header : makeURLOption()
     //  4 - 3. load url : window.loadURL()
 }
+  if (debugMode === true) {
+    window.show();
+    window.webContents.openDevTools();
+  }
 
 app.on('ready', () => {
   const arg = parseArgs(`webConvertor : ${require('./version')}

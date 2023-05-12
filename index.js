@@ -250,6 +250,11 @@ const print = async (input, output, cookies, requestHeader, delay, timeout, marg
     window.webContents.openDevTools();
   }
 
+  window.webContents.on('did-finish-load', () => {
+    logging("INFO","### Finished Load PDF ###");
+    window.webContents.executeJavaScript(`window.alert = function(){}; 0;`); // 0; -> To avoid console Warning!
+    printPage(output, delay, margin, printBackground, landscape, header, footer, pageSize === undefined ? 'A4' : pageSize)
+  });
 app.on('ready', () => {
   const arg = parseArgs(`webConvertor : ${require('./version')}
   require:

@@ -244,7 +244,7 @@ const print = async (input, output, cookies, requestHeader, delay, timeout, marg
     //  4 - 1. load local File : window.loadFile()
     //  4 - 2. make header : makeURLOption()
     //  4 - 3. load url : window.loadURL()
-}
+
   if (debugMode === true) {
     window.show();
     window.webContents.openDevTools();
@@ -261,6 +261,10 @@ const print = async (input, output, cookies, requestHeader, delay, timeout, marg
       app.exit(-3);
     }, +timeout);
   }
+
+  window.on('close', (event) => {
+    app.exit(-100);
+  });
 app.on('ready', () => {
   const arg = parseArgs(`webConvertor : ${require('./version')}
   require:

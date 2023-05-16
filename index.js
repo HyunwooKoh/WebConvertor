@@ -244,7 +244,76 @@ const print = async (input, output, cookies, requestHeader, delay, timeout, marg
     //  4 - 1. load local File : window.loadFile()
     //  4 - 2. make header : makeURLOption()
     //  4 - 3. load url : window.loadURL()
-}
+
+  if (debugMode === true) {
+    window.show();
+    window.webContents.openDevTools();
+  }
+
+  window.webContents.on('did-finish-load', () => {
+    logging("INFO","### Finished Load PDF ###");
+    window.webContents.executeJavaScript(`window.alert = function(){}; 0;`); // 0; -> To avoid console Warning!
+    printPage(output, delay, margin, printBackground, landscape, header, footer, pageSize === undefined ? 'A4' : pageSize)
+  });
+
+  if (typeof timeout !== 'undefined') {
+    setTimeout(() => {
+      app.exit(-3);
+    }, +timeout);
+  }
+
+  window.on('close', (event) => {
+    app.exit(-100);
+  });
+
+  var localFilePath;
+  var urlFilePath;
+  if(input.startsWith('http://') || input.startsWith('https://')) {
+    urlFilePath = input;
+  } else if(input.endsWith('.url') && fs.existsSync(input)) {
+    var line = fs.readFileSync(input).toString().split('\n');
+    for( var i = 0; i < line.length; i++) {
+      if (line[i].toLowerCase().startsWith('url=')) {
+        if(line[i].indexOf('https://') != -1 || line[i].indexOf('http://') != -1) {
+          urlFilePath = line[i].substr('url='.length);
+        } else {
+          localFilePath = line[i];
+          if (localFilePath.indexOf('file:///') != -1) {
+            localFilePath = localFilePath.substr('url=file:///'.length)
+          } else {
+            localFilePath = localFilePath.substr('url='.length)
+          }
+          localFilePath = localFilePath.replace('\r','');
+          localFilePath = fs.existsSync(localFilePath) ? localFilePath : null;
+        }
+      }
+    }
+  } else if(checkFileFormat(input.toLowerCase()) && fs.existsSync(input)) {
+    localFilePath = input;
+  } else {
+    app.exit(UNSUPPORT_INPUT_FILE_TYPE);
+  }
+
+  if(localFilePath) {
+    logging("INFO","Open localFile Path : " + localFilePath);
+    window.loadFile(localFilePath);
+  } else if (urlFilePath) {
+    session.defaultSession.clearStorageData();
+    insertCookies(urlFilePath, cookies);
+    if(requestHeader !== undefined) {
+      let header = makeURLOption(requestHeader);
+      logging("INFO","Open urlFile Path(With requestHeader) : " + urlFilePath + 
+          "\n\tRequest-Header : \n" + header.extraHeaders +"\n");
+      window.loadURL(urlFilePath, header);
+    } else {
+      logging("INFO","Open urlFile Path : " + urlFilePath);
+      window.loadURL(urlFilePath);
+    }
+  } else {
+    logging("INFO","LocalFile not Found! From : " + input);
+    app.exit(LOCAL_FILE_NOT_FOUND);
+  }
+};
 
 app.on('ready', () => {
   const arg = parseArgs(`webConvertor : ${require('./version')}

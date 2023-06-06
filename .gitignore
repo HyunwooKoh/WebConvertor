@@ -4,6 +4,9 @@
 /version.js
 /dist
 /tmp
+/test/program/dist
+/test/program/build
+/test/program/*.spec
 
 # ResHack output
 /log.log

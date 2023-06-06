@@ -217,7 +217,7 @@ const printPage = (output, delay, margin, printBackground, landscape, header, fo
   }, delayTime); // To Set Attribute on Web, we need tick!
 }
 
-
+const path = require('path');
 const print = async (input, output, cookies, requestHeader, delay, timeout, margin, printBackground, landscape, header, footer, pageSize, debugMode) => {
   logging("INFO","### Start printPage ### --input : " + input + "\t --output : " + output + "\n\t --cookies : " + cookies
     + "\t --request Header : " + requestHeader + "\t --header : " + header + "\t --footer : " + footer);

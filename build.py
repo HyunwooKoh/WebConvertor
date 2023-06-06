@@ -1,6 +1,7 @@
 import os
 import zipfile
 import tarfile
+import shutil
 
 def set_permissions(tarinfo):
     tarinfo.mode = 0o777 
@@ -17,7 +18,12 @@ if __name__ == "__main__":
 
     os.system("npm install")
 
+    os.chdir('./test/program')
+    os.system("pyinstaller -w -F webconvertor-tool.py")
+    os.chdir('../../')
+    
     os.system("npm run build:windows")
+    shutil.copy('./test/program/dist/webconvertor-tool.exe', './dist/webConvertor-win32-ia32/webconvertor-tool.exe')
     with zipfile.ZipFile('dist/webConvertor-win32-ia32.zip', 'w') as zip: 
         for folder, subfolders, files in os.walk('dist/webConvertor-win32-ia32'):
             for file in files:

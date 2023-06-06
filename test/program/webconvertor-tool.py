@@ -42,7 +42,7 @@ class FileSelectorWindow(QMainWindow):
         self.clear_checkboxes()
         files = os.listdir(directory)
         for file_name in files:
-            if file_name.endswith(('.html','.xml','htm')):
+            if file_name.endswith(('.html','.xml','htm', '.url')):
                 checkbox = QCheckBox(file_name)
                 checkbox.setChecked(False)
                 checkbox.stateChanged.connect(self.handle_checkbox_change)
@@ -82,27 +82,24 @@ class FileSelectorWindow(QMainWindow):
                 self.checkedAll = True
 
     def convert_selected_files(self):
-        config = ConfigParser()
-        config.read('webConvertor.ini')
-        options = []
-        for i in config['option_Use']:
-            print(i)
-
-        modulePath = config['module']['path'] + '\webconvertor.exe'
-        progress_dialog = QProgressDialog("Processing...", None, 0, 100, self)
-        progress_dialog.setWindowTitle("Selected Files")
-        progress_dialog.setAutoClose(True)
-        progress_dialog.setAutoReset(True)
+        modulePath = os.getcwd() + '\webconvertor.exe'
+        print(modulePath)
         
-        if os.path.exists(self.directoryPath + '/convertion'):
-            shutil.rmtree(self.directoryPath + '/convertion')
-        os.mkdir(self.directoryPath + '/convertion/')
-        for i in range(len(self.selected_files)):
-            progress_dialog.setValue(i // len(self.selected_files))
-            cmd = [modulePath,'--input=' + self.directoryPath + '/' + self.selected_files[i],'--output=' + self.directoryPath + '/convertion/' + self.selected_files[i] + '.pdf'] + options
-            subprocess.run(cmd)
-            
-        #QMessageBox.information(self, "webConvertor-tool", inform)
+        try:
+            print(1)
+            if os.path.exists(self.directoryPath + '/convertion'):
+                shutil.rmtree(self.directoryPath + '/convertion')
+            os.mkdir(self.directoryPath + '/convertion/')
+            print(len(self.selected_files))
+            for i in range(len(self.selected_files)):
+                print(i)
+                cmd = [modulePath,'--input=' + self.directoryPath + '/' + self.selected_files[i],'--output=' + self.directoryPath + '/convertion/' + self.selected_files[i] + '.pdf']
+                print("cmd: " + str(cmd))
+                subprocess.run(cmd)
+        except:
+            QMessageBox.information(self, "status", "failed converting")
+            exit(-1)            
+        QMessageBox.information(self, "status", "convert finished")
         exit(0)
 
 if __name__ == '__main__':
